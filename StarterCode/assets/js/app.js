@@ -105,7 +105,7 @@ chartGroup.append('g')
 .attr("class","aText inactive")
 .attr("id","xs")
 .text(d => d.label)
-.on("click", function(d) { d3.selectAll("#xs").attr("class","aText inactive"), d3.select(this).attr("class","aText active"), valuex = d.value, updateX(), updateTip()})
+.on("click", function(d) { d3.selectAll("#xs").attr("class","aText inactive"), d3.select(this).attr("class","aText active"), valuex = d.value, updateX()})
 
 
 chartGroup.append('g')
@@ -123,7 +123,7 @@ chartGroup.append('g')
 .attr("class","aText inactive")
 .attr("id","ys")
 .html(d => d.label)
-.on("click", function(d) { d3.selectAll("#ys").attr("class","aText inactive"), d3.select(this).attr("class","aText active"), valuey = d.value, updateY(), updateTip()})
+.on("click", function(d) { d3.selectAll("#ys").attr("class","aText inactive"), d3.select(this).attr("class","aText active"), valuey = d.value, updateY()})
 
 
 
@@ -150,33 +150,20 @@ d3.select(this).style("stroke","black")
 
 
 
-function updateTip (){
-    toolTip
-    .html(function(d) {
+// function updateTip (){
+//     toolTip
+//     .html(function(d) {
         
-        return (`${d.state}<br> ${valuex} : ${d[valuex]} ${valuex === "age"| valuex === "income" ? "" : "%"} <br> ${valuey} : ${d[valuey]}%`)
+//         return (`${d.state}<br> ${valuex} : ${d[valuex]} ${valuex === "age"| valuex === "income" ? "" : "%"} <br> ${valuey} : ${d[valuey]}%`)
 
 
-    });
+//     });
 
-}
-
-
-
+// }
 
 
 
 
-
-
-
-
-
-
-
-
-
-console.log(select)
 function updateX() {
     xScale.domain([d3.min(data, d =>d[valuex])*0.9,d3.max(data, d =>d[valuex])*1.1])
     chartGroup.select(".xaxis")
@@ -193,6 +180,11 @@ function updateX() {
     .transition()
     .duration(1000)
     .attr("x", d => xScale(d[valuex]))
+
+    toolTip
+    .html(function(d) {
+        
+        return (`${d.state}<br> ${valuex} : ${d[valuex]} ${valuex === "age"| valuex === "income" ? "" : "%"} <br> ${valuey} : ${d[valuey]}%`)})
 };
 
 function updateY() {
@@ -214,16 +206,15 @@ function updateY() {
     .attr("y", d => yScale(d[valuey]))
 
     ;
+
+    toolTip
+    .html(function(d) {
+        
+        return (`${d.state}<br> ${valuex} : ${d[valuex]} ${valuex === "age"| valuex === "income" ? "" : "%"} <br> ${valuey} : ${d[valuey]}%`)})
 }
 
 
 
-
-// d3.select('#selectiony').on("change", d => 
-
-// updateY(d3.select(this).property("value"))
-
-// )
 
 
 

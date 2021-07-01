@@ -51,18 +51,18 @@
   background: rgba(0, 0, 0, 0.8);
   border-radius: 4px;
 }
-/* .d3-tip::after {
+.d3-tip::after {
   content: '';
   display: block;
   width: 0;
   height: 0;
   position: absolute;
-  border-top: 8px solid transparent;
-  border-bottom: 8px solid transparent;
-  border-right: 8px solid black;
-  left: -8px;
-  top: 7px;
-} */
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+  border-top: 8px solid rgba(0, 0, 0, 0.8);
+  left: 45px;
+  bottom: -8px;
+}
 
 
 
