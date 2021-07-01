@@ -42,12 +42,12 @@ d3.csv("./assets/data/data.csv").then(function(data) {
       var select = "poverty";
 
 var xScale = d3.scaleLinear()
-.domain(d3.extent(data, d =>d.poverty))
+.domain([d3.min(data, d =>d.poverty)*0.9,d3.max(data, d =>d.poverty)*1.1])
 .range([0,chartWidth]);
 
 
 var yScale = d3.scaleLinear()
-.domain(d3.extent(data, d =>d.healthcare))
+.domain([d3.min(data, d =>d.healthcare)*0.9,d3.max(data, d =>d.healthcare)*1.1])
 .range([chartHeight,0]);
 
 
@@ -61,6 +61,7 @@ chartGroup.append("g")
 .call(yAxis);
 
 chartGroup.append("g")
+.attr("class", "xaxis")
 .attr("transform", `translate(0, ${chartHeight})`)
 .call(xAxis);
 
@@ -98,7 +99,9 @@ chartGroup.append('g')
 .attr("x",chartWidth/2)
 .attr("dy",(d,i) => (2+i)+"em")
 .attr("class","aText inactive")
+.attr("id","xs")
 .text(d => d.label)
+.on("click", function(d) { d3.selectAll("#xs").attr("class","aText inactive"), d3.select(this).attr("class","aText active"), value = d.value, updateX()})
 
 
 chartGroup.append('g')
@@ -120,16 +123,26 @@ chartGroup.append('g')
 
 console.log(select)
 function updateX() {
-    dataPlot.data(data)
-
+    xScale.domain([d3.min(data, d =>d[value])*0.9,d3.max(data, d =>d[value])*1.1])
+    chartGroup.select(".xaxis")
     .transition()
     .duration(1000)
-    .attr("cx", d => xScale(d.op))
-}
+    .call(xAxis)
+
+    dataPlot.data(data)
+    .transition()
+    .duration(1000)
+    .attr("cx", d => xScale(d[value]))
+    
+    statetext.data(data)
+    .transition()
+    .duration(1000)
+    .attr("x", d => xScale(d[value]))
+};
 
 function updateY() {
     console.log(typeof(value)),
-    yScale.domain(d3.extent(data, d =>d[value]))
+    yScale.domain([d3.min(data, d =>d[value])*0.9,d3.max(data, d =>d[value])*1.1])
     chartGroup.select(".yaxis")
     .transition()
     .duration(1000)
