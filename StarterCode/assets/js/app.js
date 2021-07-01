@@ -37,7 +37,7 @@ d3.csv("./assets/data/data.csv").then(function(data) {
       });
 
       var xLables = [{label: "In Poverty (%)", value: "poverty"}, {label: "Age(Median)", value:"age"}, {label: "Household Income (Median)", value: "income"}];
-      var yLables = ["Lacks Healthcare (%)","Smokes (%)", "Obese (%)"];
+      var yLables = [{label: "Obese (%)", value: "obesity"}, {label: "Smokes (%)", value:"smokes"}, {label: "Lacks Healthcare (%)", value: "healthcare"}];
 
       var select = "poverty";
 
@@ -86,14 +86,19 @@ var statetext = chartGroup.append("g")
 .attr("dy",".35em")
 .text(d => d.abbr);
 
-chartGroup.append('text')
+chartGroup.append('g')
 .attr("text-anchor", "middle")
-.attr("y",chartHeight+chartMargin.bottom/1.5)
-.attr("x",chartWidth/2)
 .attr("font-size",14)
 .attr("fill","black")
+.selectAll("text")
+.data(xLables)
+.enter()
+.append("text")
+.attr("y",(d,i)=>chartHeight)
+.attr("x",chartWidth/2)
+.attr("dy",(d,i) => (2+i)+"em")
 .attr("class","aText inactive")
-.text("In Poverty (%)")
+.text(d => d.label)
 
 
 chartGroup.append('g')
@@ -101,7 +106,7 @@ chartGroup.append('g')
 .attr("font-size",14)
 .attr("fill","black")
 .selectAll("text")
-.data(xLables)
+.data(yLables)
 .enter()
 .append('text')
 .attr("x", -chartWidth/4)
@@ -133,7 +138,7 @@ function updateY() {
     dataPlot.data(data)
     .transition()
     .duration(1000)
-    .attr("cy", function(d) {return yScale(d[value])})
+    .attr("cy", d => yScale(d[value]))
     
     statetext.data(data)
     .transition()
