@@ -39,7 +39,10 @@ d3.csv("./assets/data/data.csv").then(function(data) {
       var xLables = [{label: "In Poverty (%)", value: "poverty"}, {label: "Age(Median)", value:"age"}, {label: "Household Income (Median)", value: "income"}];
       var yLables = [{label: "Obese (%)", value: "obesity"}, {label: "Smokes (%)", value:"smokes"}, {label: "Lacks Healthcare (%)", value: "healthcare"}];
 
-      var select = "poverty";
+      var valuex = "poverty";
+      var valuey = "healthcare";
+
+
 
 var xScale = d3.scaleLinear()
 .domain([d3.min(data, d =>d.poverty)*0.9,d3.max(data, d =>d.poverty)*1.1])
@@ -75,6 +78,7 @@ var dataPlot = chartGroup.append("g")
 .attr("r", 10)
 .style("fill", "#9ecae1")
 
+
 var statetext = chartGroup.append("g")
 .attr("class", "stateText")
 .attr("font-size", 10)
@@ -101,7 +105,7 @@ chartGroup.append('g')
 .attr("class","aText inactive")
 .attr("id","xs")
 .text(d => d.label)
-.on("click", function(d) { d3.selectAll("#xs").attr("class","aText inactive"), d3.select(this).attr("class","aText active"), value = d.value, updateX()})
+.on("click", function(d) { d3.selectAll("#xs").attr("class","aText inactive"), d3.select(this).attr("class","aText active"), valuex = d.value, updateX(), updateTip()})
 
 
 chartGroup.append('g')
@@ -118,12 +122,63 @@ chartGroup.append('g')
 .attr("transform","rotate(-90)")
 .attr("class","aText inactive")
 .attr("id","ys")
-.text(d => d.label)
-.on("click", function(d) { d3.selectAll("#ys").attr("class","aText inactive"), d3.select(this).attr("class","aText active"), value = d.value, updateY()})
+.html(d => d.label)
+.on("click", function(d) { d3.selectAll("#ys").attr("class","aText inactive"), d3.select(this).attr("class","aText active"), valuey = d.value, updateY(), updateTip()})
+
+
+
+// Step 1: Initialize Tooltip
+var toolTip = d3.tip()
+.attr("class", "d3-tip")
+.offset([-10, 0])
+.html(function(d) {
+    return (`${d.state}<br> ${valuex} : ${d[valuex]} ${valuex === "age"| valuex === "income" ? "" : "%"} <br> ${valuey} : ${d[valuey]}%`)});
+
+// Step 2: Create the tooltip in chartGroup.
+chartGroup.call(toolTip);
+
+// Step 3: Create "mouseover" event listener to display tooltip
+dataPlot.on("mouseover", function(d) {
+toolTip.show(d, this)
+d3.select(this).style("stroke","black")
+})
+// Step 4: Create "mouseout" event listener to hide tooltip
+.on("mouseout", function(d) {
+  toolTip.hide(d)
+  d3.select(this).style("stroke",null)
+});
+
+
+
+function updateTip (){
+    toolTip
+    .html(function(d) {
+        
+        return (`${d.state}<br> ${valuex} : ${d[valuex]} ${valuex === "age"| valuex === "income" ? "" : "%"} <br> ${valuey} : ${d[valuey]}%`)
+
+
+    });
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 console.log(select)
 function updateX() {
-    xScale.domain([d3.min(data, d =>d[value])*0.9,d3.max(data, d =>d[value])*1.1])
+    xScale.domain([d3.min(data, d =>d[valuex])*0.9,d3.max(data, d =>d[valuex])*1.1])
     chartGroup.select(".xaxis")
     .transition()
     .duration(1000)
@@ -132,17 +187,17 @@ function updateX() {
     dataPlot.data(data)
     .transition()
     .duration(1000)
-    .attr("cx", d => xScale(d[value]))
+    .attr("cx", d => xScale(d[valuex]))
     
     statetext.data(data)
     .transition()
     .duration(1000)
-    .attr("x", d => xScale(d[value]))
+    .attr("x", d => xScale(d[valuex]))
 };
 
 function updateY() {
-    console.log(typeof(value)),
-    yScale.domain([d3.min(data, d =>d[value])*0.9,d3.max(data, d =>d[value])*1.1])
+    
+    yScale.domain([d3.min(data, d =>d[valuey])*0.9,d3.max(data, d =>d[valuey])*1.1])
     chartGroup.select(".yaxis")
     .transition()
     .duration(1000)
@@ -151,33 +206,24 @@ function updateY() {
     dataPlot.data(data)
     .transition()
     .duration(1000)
-    .attr("cy", d => yScale(d[value]))
+    .attr("cy", d => yScale(d[valuey]))
     
     statetext.data(data)
     .transition()
     .duration(1000)
-    .attr("y", d => yScale(d[value]))
+    .attr("y", d => yScale(d[valuey]))
 
     ;
-
-
 }
 
 
 
 
+// d3.select('#selectiony').on("change", d => 
 
-// d3.select('#selectionx').on("change", d => 
-
-// updateX(d3.select(this).property("value"))
+// updateY(d3.select(this).property("value"))
 
 // )
-
-d3.select('#selectiony').on("change", d => 
-
-updateY(d3.select(this).property("value"))
-
-)
 
 
 
