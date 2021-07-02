@@ -52,12 +52,12 @@ d3.csv("./assets/data/data.csv").then(function(data) {
 
   // set x scale
   var xScale = d3.scaleLinear()
-    .domain([d3.min(data, d =>d.poverty)*0.9,d3.max(data, d =>d.poverty)*1.1])
+    .domain([d3.min(data, d =>d[valuex])*0.9,d3.max(data, d =>d[valuex])*1.1])
     .range([0,chartWidth]);
 
   // set y scale
   var yScale = d3.scaleLinear()
-    .domain([d3.min(data, d =>d.healthcare)*0.9,d3.max(data, d =>d.healthcare)*1.1])
+    .domain([d3.min(data, d =>d[valuey])*0.9,d3.max(data, d =>d[valuey])*1.1])
     .range([chartHeight,0]);
 
   // set x and y axis
@@ -81,8 +81,8 @@ d3.csv("./assets/data/data.csv").then(function(data) {
     .data(data)
     .enter()
     .append("circle")
-    .attr("cx", d => xScale(d.poverty)  )
-    .attr("cy", d => yScale(d.healthcare) )
+    .attr("cx", d => xScale(d[valuex])  )
+    .attr("cy", d => yScale(d[valuey]) )
     .attr("r", 10)
     .style("fill", "#9ecae1");
 
@@ -94,8 +94,8 @@ d3.csv("./assets/data/data.csv").then(function(data) {
     .data(data)
     .enter()
     .append("text")
-    .attr("x", d => xScale(d.poverty))
-    .attr("y", d => yScale(d.healthcare))
+    .attr("x", d => xScale(d[valuex]))
+    .attr("y", d => yScale(d[valuey]))
     .attr("dy",".35em")
     .text(d => d.abbr);
 
@@ -111,7 +111,7 @@ d3.csv("./assets/data/data.csv").then(function(data) {
     .attr("y",(d,i)=>chartHeight)
     .attr("x",chartWidth/2)
     .attr("dy",(d,i) => (2+i)+"em")
-    .attr("class","aText inactive")
+    .attr("class",d => d.value === valuex ? "aText active" : "aText inactive")
     .attr("id","xs")
     .text(d => d.label)
     .on("click", function(d) { d3.selectAll("#xs").attr("class","aText inactive"), d3.select(this).attr("class","aText active"), valuex = d.value, updateX()});
@@ -129,7 +129,7 @@ d3.csv("./assets/data/data.csv").then(function(data) {
     .attr("y",(d,i) => -chartMargin.bottom/1.5)
     .attr("dy",(d,i) => i+"em")
     .attr("transform","rotate(-90)")
-    .attr("class","aText inactive")
+    .attr("class",d => d.value === valuey ? "aText active" : "aText inactive")
     .attr("id","ys")
     .html(d => d.label)
     .on("click", function(d) { d3.selectAll("#ys").attr("class","aText inactive"), d3.select(this).attr("class","aText active"), valuey = d.value, updateY()});
