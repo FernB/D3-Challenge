@@ -51,6 +51,7 @@
   background: rgba(0, 0, 0, 0.8);
   border-radius: 4px;
 }
+/* tip arrow */
 .d3-tip::after {
   content: '';
   display: block;
